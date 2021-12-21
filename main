@@ -1,0 +1,144 @@
+#Go Fish
+
+#Candidate Number: 54
+#Candidate Number: 127
+#Group Number: 33
+
+import random
+
+deck = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6,
+        7, 8, 9, 10, 10, 10, 10, 11, 12, 13, 14, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+#This deck substitutes the special cards (ace, king, etc...) by numbers)
+
+players = 2
+dealingcards = 7
+
+
+deckp1 = []
+deckp2 = []
+#These empty list will be used as the hands of each player, they start empty until they are called later on
+class GoFish:
+    def __init__(self, deck, players):
+        self.deck = deck
+        self.players = players
+
+
+class Player:
+    def __init__(self,numberplayer, cards, score):
+        self.numberplayer = numberplayer
+        self.cards = cards
+        self.score = score
+
+p1 = Player(1,deckp1,0)
+p2 = Player(2,deckp2,0)
+#Here the profile of 2 players are created using the PLayer class, and the hands are linked to the empty list above, the score is set to zero
+
+class Dealing:
+    def __init__(self, numbercards):
+        self.numbercards = numbercards
+        #Here the attribute of numbercards will then be linked to the variable at the top 'dealingcards'
+
+    def Process():
+        xx=0
+        #xx is a dummy variable so that the code runs as many times as = x.numbercards
+        x = Dealing(dealingcards)
+        while xx < x.numbercards:
+            cardp1 = random.choice(deck)
+            #chooses one card from the deck
+            p1.cards.append(cardp1)
+            #adds card to player hand
+            deck.remove(cardp1)
+            #removes card from deck
+            cardp2 = random.choice(deck)
+            p2.cards.append(cardp2)
+            deck.remove(cardp2)
+            xx += 1
+            #adds 1 to the dummy variable so that the loop advances
+
+class Turn:
+
+    def checkpairs():
+
+        for x in p1.cards:
+            totcount = p1.cards.count(x)
+            #for each card it counts the amount of times a card is repeated
+            if totcount > 1:
+                p1.cards.remove(x)
+                p1.cards.remove(x)
+                p1.score +=1
+                #if a card is repeated in the hand then 2 of those cards are removed and 1 point is added to the players' score
+                #if there are 3 repeated cards, then 2 are removed and 1 is left
+
+        for x in p2.cards:
+            totcount = p2.cards.count(x)
+            if totcount > 1:
+                p2.cards.remove(x)
+                p2.cards.remove(x)
+                p2.score +=1
+        #same as the loop above but for the player 2
+
+    def askcards():
+        Turn.checkpairs()
+        #This call is not necessary in the first round but it is needed further along the game
+        ask1 = int(input('Player 1, your cards are: '+str(p1.cards)+' Please input which card you want to ask to Player 2'))
+        #The program shows the cards to the player and ask them to input one of them
+        while ask1 not in p1.cards:
+            print("You don't have the card you inputted, please try asking again for a card you DO have")
+            ask1 = int(input('Player 1, your cards are: ' + str(p1.cards) + ' Please input which card you want to ask to Player 2'))
+            #this loop is activated if the player inputs a card they don't have
+        while ask1 in p2.cards:
+            print('Good job Player 1! You received the card, and you can play again')
+            p1.cards.append(ask1)
+            p2.cards.remove(ask1)
+            Turn.checkpairs()
+            #if the asked card is in player's 2 hand then it will be removed from it and added to players' 1, and then
+            #the score will be updated and the pairs calculated
+            ask1 = int(input(
+                'Player 1, your cards are: ' + str(p1.cards) + ' Please input which card you want to ask to Player 2'))
+            while ask1 not in p1.cards:
+                print("You don't have the card you inputted, please try asking again for a card you DO have")
+                ask1 = int(input('Player 1, your cards are: ' + str(p1.cards) + ' Please input which card you want to ask to Player 2'))
+            #Here is the same as above, as the player 1 will get to play again
+
+
+        print('Go Fish! Take one card from the pool')
+        gofishcard1 = random.choice(deck)
+        p1.cards.append(gofishcard1)
+        deck.remove(gofishcard1)
+        #If the player 1 misses then the while loop will stop and the lines above will be passed, they consist of adding
+        #a card from the deck to the hand and then deleting that card from the deck
+
+        #The following code is the same as explained above for player 1, only the variables change, so if any doubt arise
+        #from the code look at the comments above
+        ask2 = int(input('Player 2, your cards are: ' + str(p2.cards) + ' Please input which card you want to ask to Player 1'))
+        while ask2 not in p2.cards:
+            print("You don't have the card you inputted, please try asking again for a card you DO have")
+            ask2 = int(input('Player 2, your cards are: ' + str(p2.cards) + ' Please input which card you want to ask to Player 1'))
+        while ask2 in p1.cards:
+            print('Good job Player 2! You received the card, and you can play again')
+            p2.cards.append(ask2)
+            p1.cards.remove(ask2)
+            Turn.checkpairs()
+            ask2 = int(input(
+                'Player 2, your cards are: ' + str(p2.cards) + ' Please input which card you want to ask to Player 1'))
+            while ask2 not in p2.cards:
+                print("You don't have the card you inputted, please try asking again for a card you DO have")
+                ask2 = int(input('Player 2, your cards are: ' + str(p2.cards) + ' Please input which card you want to ask to Player 1'))
+        print('Go Fish! Take one card from the pool')
+        gofishcard2 = random.choice(deck)
+        p2.cards.append(gofishcard2)
+        deck.remove(gofishcard2)
+
+
+#The code below is what runs the game
+Dealing.Process()#The cards are dealt from the deck to the players
+Turn.checkpairs()#Check for pairs and updates score
+while len(p1.cards) !=0 or len(p2.cards) !=0:#loop that calls that runs the game as long as there is no player with empty hand
+    Turn.askcards()
+
+if p1.score > p2.score:# compares scores and decides the winner, also prints the scores
+    print('The game is over!')
+    print('Player 1 won the game with '+str(+p1.score)+' points, Player 2 received only '+str(p2.score)+' points')
+else:
+    print('The game is over!')
+    print('Player 2 won the game with ' + str(p2.score) + ' points, Player 1 received only ' + str(p1.score) + ' points')
